@@ -17,22 +17,22 @@ import java.util.List;
 
 public class TCPanel extends FileController {
 
-    private TableView<TCFile> tableView;
-    private MenuButton storyMenuButton;
-    private MenuButton dirMenuButton;
-    private MenuButton diskMenuButton;
-    private Label dirInfoLabelSize;
-    private Label dirInfoLabelSizeFree;
-    private Label dirInfoLabelFilesSelected;
-    private Label dirInfoLabelFiles;
-    private Label dirInfoLabelDirSelected;
-    private Label dirInfoLabelDir;
-    private Label diskInfoLabel;
+    private final TableView<TCFile> tableView;
+    private final MenuButton storyMenuButton;
+    private final MenuButton dirMenuButton;
+    private final MenuButton diskMenuButton;
+    private final Label dirInfoLabelSize;
+    private final Label dirInfoLabelSizeFree;
+    private final Label dirInfoLabelFilesSelected;
+    private final Label dirInfoLabelFiles;
+    private final Label dirInfoLabelDirSelected;
+    private final Label dirInfoLabelDir;
+    private final Label diskInfoLabel;
     private TCFile curDir;
-    private int CurListStoryIndex = 0;
-    private ArrayList<String> pathList;
+    private int curListStoryIndex;
+    private final List<String> pathList;
 
-    public TCPanel(TableView<TCFile> tableView, MenuButton storyMenuButton, MenuButton dirMenuButton, MenuButton diskMenuButton, Label dirInfoLabelSize, Label dirInfoLabelSizeFree, Label dirInfoLabelFilesSelected, Label dirInfoLabelFiles, Label dirInfoLabelDirSelected, Label dirInfoLabelDir, Label diskInfoLabel, TCFile curDir, ArrayList<String> pathList, int CurListStoryIndex) {
+    public TCPanel(TableView<TCFile> tableView, MenuButton storyMenuButton, MenuButton dirMenuButton, MenuButton diskMenuButton, Label dirInfoLabelSize, Label dirInfoLabelSizeFree, Label dirInfoLabelFilesSelected, Label dirInfoLabelFiles, Label dirInfoLabelDirSelected, Label dirInfoLabelDir, Label diskInfoLabel, TCFile curDir, List<String> pathList, int curListStoryIndex) {
         this.tableView = tableView;
         this.storyMenuButton = storyMenuButton;
         this.dirMenuButton = dirMenuButton;
@@ -46,7 +46,7 @@ public class TCPanel extends FileController {
         this.diskInfoLabel = diskInfoLabel;
         this.curDir = curDir;
         this.pathList = pathList;
-        this.CurListStoryIndex = CurListStoryIndex;
+        this.curListStoryIndex = curListStoryIndex;
     }
 
     public TableView<TCFile> getTableView() {
@@ -61,16 +61,16 @@ public class TCPanel extends FileController {
         this.curDir = curDir;
     }
 
-    public ArrayList<String> getPathList() {
+    public List<String> getPathList() {
         return pathList;
     }
 
     public int getCurListStoryIndex() {
-        return CurListStoryIndex;
+        return curListStoryIndex;
     }
 
-    public void setCurListStoryIndex(int CurListStoryIndex) {
-        this.CurListStoryIndex = CurListStoryIndex;
+    public void setCurListStoryIndex(int curListStoryIndex) {
+        this.curListStoryIndex = curListStoryIndex;
     }
 
     public MenuButton getDiskMenuButton() {
@@ -143,7 +143,7 @@ public class TCPanel extends FileController {
         for (TCFile tcFile : items) {
             try {
                 List<TCFile> submenus = tcFile.getFileList(tcFile.getDirectories());
-                if (submenus.size() > 0) {
+                if (!submenus.isEmpty()) {
                     Menu menuItem = new Menu(tcFile.getName());
                     createSubmenuItems(submenus, menuItem, id, eventHandler);
                     menuItem.setId(id);
@@ -164,7 +164,7 @@ public class TCPanel extends FileController {
     private void createSubmenuItems(List<TCFile> items, Menu menu, String id, EventHandler<ActionEvent> eventHandler) throws IOException {
         for (TCFile tcFile : items) {
             List<TCFile> submenus = tcFile.getFileList(tcFile.getDirectories());
-            if (submenus.size() > 0) {
+            if (!submenus.isEmpty()) {
                 Menu menuItem = new Menu(tcFile.getName());
                 createSubmenuItems(submenus, menuItem, id, eventHandler);
                 menuItem.setId(id);
@@ -189,7 +189,7 @@ public class TCPanel extends FileController {
         }
     }
 
-    public void setTableViewData(TableColumn<TCFile, String> imageTableColumn, TableColumn<TCFile, String> nameTableColumn, TableColumn<TCFile, String> typeTableColumn, TableColumn<TCFile, String> sizeTableColumn, TableColumn<TCFile, String> dateTableColumn) throws IOException {
+    public void setTableViewData(TableColumn<TCFile, String> imageTableColumn, TableColumn<TCFile, String> nameTableColumn, TableColumn<TCFile, String> typeTableColumn, TableColumn<TCFile, String> sizeTableColumn, TableColumn<TCFile, String> dateTableColumn){
         imageTableColumn.setCellValueFactory(new PropertyValueFactory<>("image"));
         nameTableColumn.setCellValueFactory(new PropertyValueFactory<>("filename"));
         typeTableColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -198,7 +198,7 @@ public class TCPanel extends FileController {
         tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    public void createStoryMenu(EventHandler<ActionEvent> eventHandler) throws IOException, ClassNotFoundException {
+    public void createStoryMenu(EventHandler<ActionEvent> eventHandler) throws IOException {
         List<String> menuItems;
         if (pathList.isEmpty()) {
             File[] roots = File.listRoots();
@@ -206,7 +206,7 @@ public class TCPanel extends FileController {
             menuItems = new ArrayList<>();
             menuItems.add(roots[0].getAbsolutePath());
         } else {
-            if(!Files.exists(Paths.get(pathList.get(0)))){
+            if (!Files.exists(Paths.get(pathList.get(0)))) {
                 pathList.add(0, File.listRoots()[0].getAbsolutePath());
             }
             curDir = new TCFile(pathList.get(0));

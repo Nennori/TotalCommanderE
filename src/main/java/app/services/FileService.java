@@ -9,6 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -23,12 +24,7 @@ import java.util.zip.ZipOutputStream;
 public class FileService implements Serializable {
 
     public static void initAlert(Stage primaryStage, String title, String headerText, String contentText, boolean isWarning) {
-        Alert alert;
-        if (isWarning) {
-            alert = new Alert(Alert.AlertType.WARNING, contentText, ButtonType.OK);
-        } else {
-            alert = new Alert(Alert.AlertType.INFORMATION, contentText, ButtonType.OK);
-        }
+        Alert alert = isWarning ? new Alert(Alert.AlertType.WARNING, contentText, ButtonType.OK) : new Alert(Alert.AlertType.INFORMATION, contentText, ButtonType.OK);
         alert.initOwner(primaryStage);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
@@ -41,6 +37,7 @@ public class FileService implements Serializable {
         if (!selectedDelItems.isEmpty()) {
             if (safe) {
                 if (fileUtils.hasTrash()) {
+//                    Desktop.getDesktop().;
                     for (TCFile file : selectedDelItems) {
                         fileUtils.moveToTrash(file);
                         table.getItems().remove(file);
@@ -93,8 +90,7 @@ public class FileService implements Serializable {
     }
 
     public static void unzip(File file, String parentPath) {
-        try {
-            ZipFile zip = new ZipFile(file.getPath());
+        try (ZipFile zip = new ZipFile(file.getPath())) {
             Enumeration entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
@@ -106,10 +102,7 @@ public class FileService implements Serializable {
                                     new File(parentPath, entry.getName()))));
                 }
             }
-            zip.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException ignored) { }
     }
 
     public static void writeOut(InputStream in, OutputStream out) throws IOException {
@@ -121,31 +114,23 @@ public class FileService implements Serializable {
         in.close();
     }
 
-    public static void SaveToFile(String filename, ArrayList<String> paths)
-            throws ClassNotFoundException, IOException {
-        FileOutputStream fOut = new FileOutputStream(filename, false);
-        ObjectOutputStream objOut = new ObjectOutputStream(fOut);
-        for (String path : paths) {
-            objOut.writeObject(path);
+    public static void saveToFile(String filename, List<String> paths) throws IOException {
+        try(FileOutputStream fileOutputStream = new FileOutputStream(filename, false); ObjectOutputStream objOut = new ObjectOutputStream(fileOutputStream)){
+            for (String path : paths) {
+                objOut.writeObject(path);
+            }
         }
-        objOut.close();
-        fOut.close();
     }
 
-    public static ArrayList<String> ReadFromFile(String filename) {
-
+    public static List<String> readFromFile(String filename) {
         ArrayList<String> paths = new ArrayList<>();
-        try {
-            FileInputStream fInput = new FileInputStream(filename);
-            ObjectInputStream objInput = new ObjectInputStream(fInput);
+        try (FileInputStream fInput = new FileInputStream(filename); ObjectInputStream objInput = new ObjectInputStream(fInput)) {
             String path;
             path = (String) objInput.readObject();
             while (path != null) {
                 paths.add(path);
                 path = (String) objInput.readObject();
             }
-            objInput.close();
-            fInput.close();
             return paths;
         } catch (IOException | ClassNotFoundException e) {
             return paths;
@@ -180,11 +165,11 @@ public class FileService implements Serializable {
         }
     }
 
-    public static void save(ArrayList<String> pathListLeft, ArrayList<String> pathListRight) {
+    public static void save(List<String> pathListLeft, List<String> pathListRight) {
         try {
-            SaveToFile("totalcom1.bin", pathListLeft);
-            SaveToFile("totalcom2.bin", pathListRight);
-        } catch (ClassNotFoundException | IOException classNotFoundException) {
+            saveToFile("totalcom1.bin", pathListLeft);
+            saveToFile("totalcom2.bin", pathListRight);
+        } catch (IOException classNotFoundException) {
             classNotFoundException.printStackTrace();
         }
     }
@@ -231,7 +216,6 @@ public class FileService implements Serializable {
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     if (file.getFileName().toString().contains(key)) {
                         files.add(file);
-                        System.out.println(files.get(0).toString());
                     }
                     return FileVisitResult.CONTINUE;
                 }

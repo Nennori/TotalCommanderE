@@ -4,7 +4,6 @@ import app.Main;
 import app.models.TCFile;
 import app.services.FileService;
 import app.services.OpenCommand;
-import app.views.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,14 +13,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
-public class SearchWindowController extends View implements Initializable {
+public class SearchWindowController implements Initializable {
     @FXML
     private Button startButton;
     @FXML
@@ -133,7 +131,7 @@ public class SearchWindowController extends View implements Initializable {
         try {
             new OpenCommand(null, Arrays.asList("Notepad.exe", path.toString())).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Error", "Can't open Notepad", "Error opening Notepad", true);
+            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть Блокнот", "Программа не имеет прав на данную операцию", true);
         }
     };
 }

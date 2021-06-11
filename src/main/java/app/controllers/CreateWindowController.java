@@ -31,8 +31,6 @@ public class CreateWindowController {
     @FXML
     private void handleOk() {
         this.file = createDirField.getText();
-        System.out.println("New directory/file name is: " + this.file);
-
         dialogStage.close();
     }
 

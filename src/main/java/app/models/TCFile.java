@@ -1,5 +1,7 @@
 package app.models;
 
+import app.resources.Extension;
+import app.resources.ExtensionImage;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,79 +21,68 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class TCFile extends File {
 
-    private final SimpleStringProperty filename;
-    private final SimpleStringProperty size;
-    private final SimpleStringProperty date;
-    private final SimpleStringProperty type;
-    private static final String imageType = "./img/1187.png";
-    private static final String textType = "./img/993.png";
-    private static final String docType = "./img/895.png";
-    private static final String diskType = "./img/1116.png";
-    private static final String archiType = "./img/1531.png";
-    private static final String musicType = "./img/1179.png";
-    private static final String videoType = "./img/118.png";
-    private static final String exeType = "./img/63.png";
-    private static final String batType = "./img/93.png";
-    private static final String cmdType = "./img/602.png";
-    private static final String iniType = "./img/595.png";
-    private static final String unknownType = "./img/77.png";
-    private static final String parentType = "./img/1376.png";
-    private static final String folderType =  "./img/101.png";
-    private static final String picType =  "./img/628.png";
-    private static final String folder = "<Папка>";
-    private static final String parentValue = "parent";
-    private static final String folderValue = "folder";
-    private static final String unknownValue = "unknown";
-    private ImageView image;
+    private final transient SimpleStringProperty filename;
+    private final transient SimpleStringProperty size;
+    private final transient SimpleStringProperty date;
+    private final transient SimpleStringProperty type;
+
+    private transient ImageView image;
     private boolean isParent = false;
 
-    private static final String dateFormat_dd_MM_yyyy_HH_mm = "dd.MM.yyyy HH:mm";
+    private static final String DATE_FORMAT_DD_MM_YYYY_HH_MM = "dd.MM.yyyy HH:mm";
     private static final HashMap<String, String> typeImages = new HashMap<>();
 
     static {
-        typeImages.put("folder", folderType);
-        typeImages.put("txt", textType);
-        typeImages.put("pdf", textType);
-        typeImages.put("html", textType);
-        typeImages.put("htm", textType);
-        typeImages.put("mht", textType);
-        typeImages.put("fb2", textType);
-        typeImages.put("epub", textType);
-        typeImages.put("mobi", textType);
-        typeImages.put("doc", docType);
-        typeImages.put("docx", docType);
-        typeImages.put("xls", docType);
-        typeImages.put("xlsx", docType);
-        typeImages.put("ppt", docType);
-        typeImages.put("pptx", docType);
-        typeImages.put("djvu", unknownType);
-        typeImages.put("iso", diskType);
-        typeImages.put("zip", archiType);
-        typeImages.put("rar", archiType);
-        typeImages.put("7z", archiType);
-        typeImages.put("gzip", archiType);
-        typeImages.put("jpg", imageType);
-        typeImages.put("bmp", imageType);
-        typeImages.put("jpeg", imageType);
-        typeImages.put("png", imageType);
-        typeImages.put("gif", imageType);
-        typeImages.put("tif", picType);
-        typeImages.put("mp3", musicType);
-        typeImages.put("wav", musicType);
-        typeImages.put("midi", musicType);
-        typeImages.put("aac", musicType);
-        typeImages.put("mp4", videoType);
-        typeImages.put("avi", videoType);
-        typeImages.put("mkv", videoType);
-        typeImages.put("wmv", videoType);
-        typeImages.put("flv", videoType);
-        typeImages.put("mpeg", videoType);
-        typeImages.put("exe", exeType);
-        typeImages.put("bat", batType);
-        typeImages.put("cmd", cmdType);
-        typeImages.put("ini", iniType);
-        typeImages.put("unknown", unknownType);
-        typeImages.put("parent", parentType);
+        typeImages.put(Extension.FOLDER, ExtensionImage.FOLDER_TYPE);
+        typeImages.put(Extension.TXT, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.PDF, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.HTML, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.HTM, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.FB2, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.EPUB, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.MOBI, ExtensionImage.TEXT_TYPE);
+        typeImages.put(Extension.DOC, ExtensionImage.DOC_TYPE);
+        typeImages.put(Extension.DOCX, ExtensionImage.DOC_TYPE);
+        typeImages.put(Extension.XLS, ExtensionImage.DOC_TYPE);
+        typeImages.put(Extension.XLSX, ExtensionImage.DOC_TYPE);
+        typeImages.put(Extension.PPT, ExtensionImage.DOC_TYPE);
+        typeImages.put(Extension.PPTX, ExtensionImage.DOC_TYPE);
+        typeImages.put(Extension.DJVU, ExtensionImage.UNKNOWN_TYPE);
+        typeImages.put(Extension.ISO, ExtensionImage.DISK_TYPE);
+        typeImages.put(Extension.ZIP, ExtensionImage.ARCHIVE_TYPE);
+        typeImages.put(Extension.RAR, ExtensionImage.ARCHIVE_TYPE);
+        typeImages.put(Extension.SEVENZ, ExtensionImage.ARCHIVE_TYPE);
+        typeImages.put(Extension.GZIP, ExtensionImage.ARCHIVE_TYPE);
+        typeImages.put(Extension.JPG, ExtensionImage.IMAGE_TYPE);
+        typeImages.put(Extension.BMP, ExtensionImage.IMAGE_TYPE);
+        typeImages.put(Extension.JPEG, ExtensionImage.IMAGE_TYPE);
+        typeImages.put(Extension.PNG, ExtensionImage.IMAGE_TYPE);
+        typeImages.put(Extension.GIF, ExtensionImage.IMAGE_TYPE);
+        typeImages.put(Extension.TIF, ExtensionImage.PIC_TYPE);
+        typeImages.put(Extension.MP3, ExtensionImage.MUSIC_TYPE);
+        typeImages.put(Extension.WAV, ExtensionImage.MUSIC_TYPE);
+        typeImages.put(Extension.MIDI, ExtensionImage.MUSIC_TYPE);
+        typeImages.put(Extension.AAC, ExtensionImage.MUSIC_TYPE);
+        typeImages.put(Extension.MP4, ExtensionImage.VIDEO_TYPE);
+        typeImages.put(Extension.AVI, ExtensionImage.VIDEO_TYPE);
+        typeImages.put(Extension.MKV, ExtensionImage.VIDEO_TYPE);
+        typeImages.put(Extension.WMV, ExtensionImage.VIDEO_TYPE);
+        typeImages.put(Extension.FLV, ExtensionImage.VIDEO_TYPE);
+        typeImages.put(Extension.MPEG, ExtensionImage.VIDEO_TYPE);
+        typeImages.put(Extension.EXE, ExtensionImage.EXE_TYPE);
+        typeImages.put(Extension.BAT, ExtensionImage.BAT_TYPE);
+        typeImages.put(Extension.CMD, ExtensionImage.CMD_TYPE);
+        typeImages.put(Extension.INI, ExtensionImage.INI_TYPE);
+        typeImages.put(Extension.UNKNOWN, ExtensionImage.UNKNOWN_TYPE);
+        typeImages.put(Extension.PARENT, ExtensionImage.PARENT_TYPE);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if ((obj instanceof TCFile)) {
+            return compareTo((File)obj) == 0;
+        }
+        return false;
     }
 
     private String getCreationTime(String path) throws IOException {
@@ -108,11 +99,11 @@ public class TCFile extends File {
                 .toLocalDateTime();
 
         return localDateTime.format(
-                DateTimeFormatter.ofPattern(dateFormat_dd_MM_yyyy_HH_mm));
+                DateTimeFormatter.ofPattern(DATE_FORMAT_DD_MM_YYYY_HH_MM));
     }
 
     public void setParentImage() {
-        image.setImage(new Image(typeImages.get(parentValue)));
+        image.setImage(new Image(typeImages.get(ExtensionImage.PARENT_VALUE)));
     }
 
     public TCFile(String pathname) throws IOException {
@@ -126,24 +117,24 @@ public class TCFile extends File {
     public TCFile(String pathname, boolean isNew) throws IOException {
         super(pathname);
         this.filename = new SimpleStringProperty("[" + this.getName() + "]");
-        this.size = new SimpleStringProperty(folder);
-        this.date = isNew?new SimpleStringProperty(new SimpleDateFormat(dateFormat_dd_MM_yyyy_HH_mm).format(new Date()))
+        this.size = new SimpleStringProperty(ExtensionImage.FOLDER);
+        this.date = isNew?new SimpleStringProperty(new SimpleDateFormat(DATE_FORMAT_DD_MM_YYYY_HH_MM).format(new Date()))
                 :new SimpleStringProperty(getCreationTime(pathname));
         this.type = new SimpleStringProperty("");
-        this.image = new ImageView(new Image(typeImages.get(folderValue)));
+        this.image = new ImageView(new Image(typeImages.get(Extension.FOLDER)));
     }
 
     public TCFile(String parent, String child, boolean isNew) throws IOException {
         super(parent, child);
         this.size = new SimpleStringProperty(String.valueOf(this.length()));
-        this.date = isNew?new SimpleStringProperty(new SimpleDateFormat(dateFormat_dd_MM_yyyy_HH_mm).format(new Date()))
+        this.date = isNew?new SimpleStringProperty(new SimpleDateFormat(DATE_FORMAT_DD_MM_YYYY_HH_MM).format(new Date()))
                 :new SimpleStringProperty(getCreationTime(parent + "\\" + child));
         this.type = new SimpleStringProperty(getFileExtension());
         this.filename = new SimpleStringProperty(this.getName().replace("." + getType(), ""));
         try {
             this.image = new ImageView(new Image(typeImages.get(getType())));
         } catch (NullPointerException exception) {
-            this.image = new ImageView(new Image(typeImages.get(unknownValue)));
+            this.image = new ImageView(new Image(typeImages.get(ExtensionImage.UNKNOWN_VALUE)));
         }
     }
 
@@ -185,7 +176,7 @@ public class TCFile extends File {
 
     public Long getDirLength() {
         File[] files = this.listFiles();
-        Long size = 0L;
+        long size = 0L;
         if (files != null) {
             for (File file : files) {
                 size += file.length();
@@ -196,22 +187,6 @@ public class TCFile extends File {
 
     public String getDate() {
         return date.get();
-    }
-
-    public SimpleStringProperty nameProperty() {
-        return filename;
-    }
-
-    public SimpleStringProperty sizeProperty() {
-        return size;
-    }
-
-    public SimpleStringProperty dateProperty() {
-        return date;
-    }
-
-    public SimpleStringProperty typeProperty() {
-        return type;
     }
 
     public List<TCFile> getFileList(File[] sourceFiles) throws IOException {

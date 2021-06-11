@@ -4,8 +4,6 @@ import app.controllers.CreateWindowController;
 import app.controllers.FileController;
 import app.controllers.SearchWindowController;
 import javafx.application.Application;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -14,7 +12,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,9 +21,6 @@ import java.nio.file.Path;
 public class Main extends Application {
 
     private Stage primaryStage;
-    private FileController fileController;
-    private CreateWindowController createWindowController;
-    private SearchWindowController searchWindowController;
     private final Image image = new Image("./img/1961.png");
 
     @Override
@@ -51,10 +45,10 @@ public class Main extends Application {
         primaryStage.getIcons().add(image);
         Scene mainScene = new Scene(root, 827, 551);
         primaryStage.setScene(mainScene);
-        fileController = loader.getController();
+        FileController fileController = loader.getController();
         fileController.setMainApp(this);
         primaryStage.setOnCloseRequest(fileController.handleCloseEvent);
-        setKeyBoardListener();
+        fileController.setKeyBoardListener();
         primaryStage.show();
     }
 
@@ -74,7 +68,7 @@ public class Main extends Application {
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
-            createWindowController = loader.getController();
+            CreateWindowController createWindowController = loader.getController();
             createWindowController.setDialogStage(dialogStage);
             dialogStage.showAndWait();
             return createWindowController.getDirectory();
@@ -110,11 +104,11 @@ public class Main extends Application {
             loader.setLocation(Main.class.getResource("views/listerImage.fxml"));
             Pane page = loader.load();
             ImageView imageView = (ImageView) page.getChildren().get(0);
-            Image image = new Image(imagePath);
-            imageView.setImage(image);
+            Image listerImage = new Image(imagePath);
+            imageView.setImage(listerImage);
             Stage dialogStage = new Stage();
             dialogStage.setTitle(title);
-            dialogStage.getIcons().add(image);
+            dialogStage.getIcons().add(listerImage);
             dialogStage.initModality(Modality.NONE);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
@@ -137,7 +131,7 @@ public class Main extends Application {
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(page);
             dialogStage.setScene(scene);
-            searchWindowController = loader.getController();
+            SearchWindowController searchWindowController = loader.getController();
             searchWindowController.setMainApp(this);
             searchWindowController.setSearchDirField(curDir);
             searchWindowController.setDialogStage(dialogStage);
@@ -165,63 +159,5 @@ public class Main extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void setKeyBoardListener() {
-        Scene mainScene = primaryStage.getScene();
-        if (mainScene != null) System.out.println("Main scene is received");
-        assert mainScene != null;
-        mainScene.setOnKeyPressed(keyEvent -> {
-            KeyCode keyCode = keyEvent.getCode();
-            if (keyEvent.isShiftDown() && (keyCode == KeyCode.F4)) {
-                fileController.handleCreateFileEvent.handle(keyEvent);
-            } else if (keyEvent.isControlDown() && (keyCode == KeyCode.C)) {
-                fileController.handleSelectFilesEvent.handle(keyEvent);
-            } else if (keyEvent.isControlDown() && (keyCode == KeyCode.V)) {
-                fileController.handleCopyFilesEvent1.handle(keyEvent);
-            } else if (keyEvent.isAltDown() && keyEvent.isControlDown() && (keyCode == KeyCode.F5)) {
-                fileController.handleZipDirEvent.handle(keyEvent);
-            } else if (keyEvent.isAltDown() && (keyCode == KeyCode.F4)) {
-                new EventHandler<Event>() {
-                    @Override
-                    public void handle(Event event) {
-                        primaryStage.close();
-                    }
-                };
-            } else if (keyEvent.isAltDown() && keyCode == KeyCode.LEFT) {
-                fileController.handleBackEvent.handle(keyEvent);
-            } else if (keyEvent.isAltDown() && keyCode == KeyCode.RIGHT) {
-                fileController.handleForwardEvent.handle(keyEvent);
-            } else if (keyEvent.isShiftDown() && (keyCode == KeyCode.DELETE || keyCode == KeyCode.F8)) {
-                fileController.handleDeleteFilesHardEvent.handle(keyEvent);
-            } else if (keyEvent.isControlDown() && keyEvent.isShiftDown() && keyCode == KeyCode.K) {
-                fileController.handleOpenTrashEvent.handle(keyEvent);
-            } else if (keyEvent.isAltDown() && keyCode == KeyCode.T) {
-                fileController.handleOpenControlEvent.handle(keyEvent);
-            } else if (keyEvent.isControlDown() && keyCode == KeyCode.SLASH) {
-                fileController.handleMoveToRootEvent1.handle(keyEvent);
-            } else if (keyEvent.isControlDown() && keyCode == KeyCode.BACK_SLASH) {
-                fileController.handleMoveToRootEvent1.handle(keyEvent);
-            } else if (keyEvent.isAltDown() && keyCode == KeyCode.F7) {
-                fileController.handleSearchEvent.handle(keyEvent);
-            } else if (keyCode.equals(KeyCode.F3)) {
-                fileController.handleObserveFilesEvent.handle(keyEvent);
-            } else if (keyCode.equals(KeyCode.F4)) {
-                fileController.handleEditFileEvent.handle(keyEvent);
-            } else if (keyCode.equals(KeyCode.F5)) {
-                fileController.handleCopyFilesEvent.handle(keyEvent);
-            } else if (keyCode.equals(KeyCode.F6)) {
-                fileController.handleRenameMoveEvent.handle(keyEvent);
-            } else if (keyCode.equals(KeyCode.F7)) {
-                fileController.handleCreateDirEvent.handle(keyEvent);
-            } else if ((keyCode == KeyCode.F8) || (keyCode == KeyCode.DELETE)) {
-                fileController.handleDeleteFilesSafeEvent.handle(keyEvent);
-            } else if (keyEvent.getCode() == KeyCode.F9) {
-                fileController.handleRefreshEvent.handle(keyEvent);
-            } else if (keyCode == KeyCode.BACK_SPACE) {
-                fileController.handleMoveToParentEvent.handle(keyEvent);
-            }
-        });
-
     }
 }
