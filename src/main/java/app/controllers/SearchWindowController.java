@@ -2,6 +2,7 @@ package app.controllers;
 
 import app.Main;
 import app.models.TCFile;
+import app.constants.FileConstant;
 import app.services.FileService;
 import app.services.OpenCommand;
 import javafx.collections.FXCollections;
@@ -12,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -38,10 +40,11 @@ public class SearchWindowController implements Initializable {
     private ListView<Path> resultsListView;
     @FXML
     private ComboBox<String> levelComboBox;
-    public ObservableList<Path> files = FXCollections.observableArrayList();
+    private final ObservableList<Path> files = FXCollections.observableArrayList();
     private Stage dialogStage;
     private Path searchResult = null;
     private Main main;
+    private static final Logger log = Logger.getLogger(SearchWindowController.class);
 
     public void setMainApp(Main main) {
         this.main = main;
@@ -53,9 +56,9 @@ public class SearchWindowController implements Initializable {
 
     public void setComboBox(ComboBox<String> cb) {
         cb.getItems().add("Все (неограниченная)");
-        cb.getItems().add("Только текущий");
+        cb.getItems().add("Число уровней: 1 (только текущий)");
         cb.getSelectionModel().select(0);
-        for (int i = 1; i < 101; i++) {
+        for (int i = 2; i < 101; i++) {
             cb.getItems().add("Число уровней: " + i);
         }
     }
@@ -84,13 +87,13 @@ public class SearchWindowController implements Initializable {
 
     private void setHandlers() {
         startButton.addEventHandler(ActionEvent.ACTION, handleSearchFilesEvent);
-        cancelButton.setCancelButton(true);
+        cancelButton.setOnAction(event -> dialogStage.close());
         goToButton.addEventHandler(ActionEvent.ACTION, handleGoToEvent);
         reviewButton.addEventHandler(ActionEvent.ACTION, handleReviewFileEvent);
         editButton.addEventHandler(ActionEvent.ACTION, handleEditFileEvent);
     }
 
-    public EventHandler<ActionEvent> handleSearchFilesEvent = event -> {
+    private final EventHandler<ActionEvent> handleSearchFilesEvent = event -> {
         String key = searchFileField.getText();
         String dir = searchDirField.getText();
         if (!key.isEmpty() && !dir.isEmpty()) {
@@ -101,37 +104,36 @@ public class SearchWindowController implements Initializable {
                 int max = levelComboBox.getSelectionModel().getSelectedIndex();
                 if (max == 0) {
                     max = Integer.MAX_VALUE;
-                } else {
-                    max--;
                 }
                 FileService.searchFiles(file, files, key, max);
-            } catch (IOException | NullPointerException ignored) {
+            } catch (IOException | NullPointerException exception) {
+                log.error(exception.getMessage());
+                FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_SEARCH, FileConstant.ERR_COM_EXP, true);
             }
         } else {
             FileService.initAlert(main.getPrimaryStage(), "Error", "Не заполнены поля", "Заполните поля", true);
         }
     };
 
-    public EventHandler<ActionEvent> handleGoToEvent = event -> {
+    private final EventHandler<ActionEvent> handleGoToEvent = event -> {
         searchResult = resultsListView.getSelectionModel().getSelectedItem();
         dialogStage.close();
     };
 
-    public EventHandler<ActionEvent> handleEditFileEvent = event -> {
+    private final EventHandler<ActionEvent> handleEditFileEvent = event -> {
         try {
-            TCFile file = new TCFile(resultsListView.getSelectionModel().getSelectedItem().toString());
-            FileService.reviewFile(file);
-        } catch (IOException e) {
-            e.printStackTrace();
+            new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, FileConstant.START, resultsListView.getSelectionModel().getSelectedItem().toString())).execute();
+        } catch (IOException exception) {
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_EDIT, FileConstant.ERR_COM_EXP, true);
         }
     };
 
-    public EventHandler<ActionEvent> handleReviewFileEvent = event -> {
+    private final EventHandler<ActionEvent> handleReviewFileEvent = event -> {
         Path path = resultsListView.getSelectionModel().getSelectedItem();
         try {
-            new OpenCommand(null, Arrays.asList("Notepad.exe", path.toString())).execute();
+            new OpenCommand(null, Arrays.asList(FileConstant.NOTEPAD, path.toString())).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть Блокнот", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_NOTEPAD, FileConstant.ERR_COM_EXP, true);
         }
     };
 }

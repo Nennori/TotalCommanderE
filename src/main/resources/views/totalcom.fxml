@@ -25,7 +25,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="56.0" minWidth="78.0" prefHeight="551.0" prefWidth="827.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.FileController">
+<VBox minHeight="56.0" minWidth="78.0" prefHeight="551.0" prefWidth="827.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.FileController">
     <HBox>
         <MenuBar prefHeight="25.0" prefWidth="572.0" style="-fx-padding: 0;" styleClass="background">
             <opaqueInsets>
@@ -35,14 +35,14 @@
                 <MenuItem fx:id="packMenuItem" mnemonicParsing="false" text="Упаковать...       Alt+F5">
                     <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../img/121.png" />
+                            <Image url="@../img/121.png" />
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem fx:id="unpackMenuItem" mnemonicParsing="false" text="Распаковать...   Alt+F9">
                     <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../img/125.png" />
+                            <Image url="@../img/125.png" />
                         </ImageView>
                     </graphic>
                 </MenuItem>
@@ -53,25 +53,25 @@
                 <MenuItem fx:id="searchMenuItem" mnemonicParsing="false" text="Поиск файлов...     Alt+F7">
                     <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../img/189.png" />
+                            <Image url="@../img/189.png" />
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <MenuItem fx:id="backMenuItem" mnemonicParsing="false" text="Назад                     Alt+&lt;-">
                     <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../img/2302.png" />
+                            <Image url="@../img/2302.png" />
                         </ImageView>
                     </graphic>
                 </MenuItem>
                 <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem fx:id="cmdMenuItem" mnemonicParsing="false" text="Открыть командную консоль" />
             </Menu>
-            <Menu fx:id="menuItemView" mnemonicParsing="false" text="Вид">
+            <Menu mnemonicParsing="false" text="Вид">
                 <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" text="Обновить содержимое панели">
                     <graphic>
                         <ImageView fitHeight="25.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../img/181.png" />
+                            <Image url="@../img/181.png" />
                         </ImageView>
                     </graphic>
                 </MenuItem>
@@ -83,7 +83,7 @@
                 <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" text="Горячие клавиши">
                     <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
-                            <Image url="@../../img/237.png" />
+                            <Image url="@../img/237.png" />
                         </ImageView>
                     </graphic>
                 </MenuItem>
@@ -99,7 +99,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView cache="true" fitHeight="27.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/181.png" />
+                    <Image url="@../img/181.png" />
                 </ImageView>
             </graphic>
             <styleClass>
@@ -121,7 +121,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/2302.png" />
+                    <Image url="@../img/2302.png" />
                 </ImageView>
             </graphic>
             <tooltip>
@@ -134,7 +134,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/2302.png" />
+                    <Image url="@../img/2302.png" />
                 </ImageView>
             </graphic>
             <tooltip>
@@ -152,7 +152,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView fitHeight="19.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/121.png" />
+                    <Image url="@../img/121.png" />
                 </ImageView>
             </graphic>
             <tooltip>
@@ -165,7 +165,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView fitHeight="19.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/125.png" />
+                    <Image url="@../img/125.png" />
                 </ImageView>
             </graphic>
             <tooltip>
@@ -183,7 +183,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView fitHeight="23.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/189.png" />
+                    <Image url="@../img/189.png" />
                 </ImageView>
             </graphic>
             <tooltip>
@@ -201,7 +201,7 @@
             </FlowPane.margin>
             <graphic>
                 <ImageView fitHeight="24.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                    <Image url="@../../img/349.png" />
+                    <Image url="@../img/349.png" />
                 </ImageView>
             </graphic>
             <tooltip>
@@ -272,7 +272,7 @@
             <Button fx:id="observeButton" layoutX="392.0" layoutY="83.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="83.0">
                 <graphic>
                     <ImageView fitHeight="23.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../../img/109.png" />
+                        <Image url="@../img/109.png" />
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -282,7 +282,7 @@
             <Button fx:id="editButton" layoutX="392.0" layoutY="119.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0">
                 <graphic>
                     <ImageView fitHeight="24.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../../img/113.png" />
+                        <Image url="@../img/113.png" />
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -292,7 +292,7 @@
             <Button fx:id="copyButton" layoutX="392.0" layoutY="155.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0">
                 <graphic>
                     <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../../img/249.png" />
+                        <Image url="@../img/249.png" />
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -302,7 +302,7 @@
             <Button fx:id="renameMoveButton" layoutX="392.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0">
                 <graphic>
                     <ImageView fitHeight="23.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../../img/253.png" />
+                        <Image url="@../img/253.png" />
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -312,7 +312,7 @@
             <Button fx:id="pack1Button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="393.0" layoutY="269.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="5.0">
                 <graphic>
                     <ImageView fitHeight="22.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../../img/121.png" />
+                        <Image url="@../img/121.png" />
                     </ImageView>
                 </graphic>
                 <tooltip>
@@ -322,7 +322,7 @@
             <Button fx:id="createDirButton" layoutX="391.0" layoutY="307.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="5.0">
                 <graphic>
                     <ImageView fitHeight="24.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../../img/117.png" />
+                        <Image url="@../img/117.png" />
                     </ImageView>
                 </graphic>
                 <tooltip>

@@ -1,0 +1,62 @@
+package app.constants;
+
+
+public final class FileConstant {
+    private FileConstant() { }
+    public static final String APP_NAME = "Emulator Total Commander";
+    public static final String ERR_DIR = "Не удалось перейти в каталог";
+    public static final String ERR_DIR_EXP = "Каталог не существует или программа не имеет прав на данную операцию";
+    public static final String ERR_DEL = "Не удалось удалить файл(-ы)";
+    public static final String ERR_COM_EXP = "Программа не имеет прав на данную операцию";
+    public static final String ERR_COPY = "Не удалось копировать файл(-ы)";
+    public static final String ERR_OPEN = "Не удалось открыть файл";
+    public static final String ERR_OPEN_EXP = "Файл не существует или программа не имеет прав на данную операцию";
+    public static final String ERR_EDIT = "Не удалось открыть файл для редактирования";
+    public static final String START = "start";
+    public static final String CMD = "cmd.exe";
+    public static final String ERR_CMD = "Не удалось открыть командную строку";
+    public static final String C = "/c";
+    public static final String ERR_DISK = "Не удалось перейти на диск";
+    public static final String ERR_DISK_EXP = "Выберите другой диск";
+    public static final String ERR_NOTEPAD = "Не удалось открыть Блокнот";
+    public static final String ERR_CONTROL = "Не удалось открыть панель управления";
+    public static final String ERR_TRASH = "Не удалось открыть Корзину";
+    public static final String NOTEPAD = "Notepad.exe";
+    public static final String ERR_UNZIP = "Не удалось распаковать файл";
+    public static final String ERR_UNZIP_EXP = "Файл не является архивом";
+    public static final String CREATE_FILE = "Создать новый файл:";
+    public static final String UNZIP = "Распаковать архив в:";
+    public static final String ERR_ZIP = "Не удалось упаковать файл(-ы)";
+    public static final String ERR_CREATE_FILE = "Не удалось создать файл";
+    public static final String CREATE_DIR = "Создать новый каталог:";
+    public static final String ERR_CREATE_DIR = "Не удалось создать каталог";
+    public static final String ERR_CREATE_DIR_EXP = "Каталог с таким именем уже существует или программа не имеет прав на данную операцию";
+    public static final String COPY_RENAME = "Переименовать/переместить файл в:";
+    public static final String ERR_COPY_RENAME = "Не удалось переименовать/переместить файл";
+    public static final String ERR_COPY_RENAME_EXP = "Файл с таким именем уже существует";
+    public static final String ABOUT_TOTAL_COM = "O программе Emulator Total Commander";
+    public static final String ABOUT = "О программе";
+    public static final String DESCRIPTION = "Emulator Total Commander, версия 1.0\nАвтор: Жук А.Д.";
+    public static final String OPEN_BIN = "start shell:RecycleBinFolder";
+    public static final String OPEN_CONTROL = "start control";
+    public static final String LEFT_ID = "Left";
+    public static final String RIGHT_ID = "Right";
+    public static final String USER_HOME = "user.home";
+    public static final String COPY_FILE = "Копировать файл ";
+    public static final String COPY_FILES = "Копировать файлы";
+    public static final String ZIP_EXT = ".zip";
+    public static final String ERR_CLOSE = "Не удалось закрыть приложение";
+    public static final String ERR_REFRESH = "Не удалось обновить содержимое каталога";
+    public static final String ERR_DIR_SIZE = "Не удалось получить размер каталога";
+    public static final String ERR_FILE_COUNT = "Не удалось получить число файлов в каталоге";
+    public static final String SAVE_FILE_1 = "totalcom1.bin";
+    public static final String SAVE_FILE_2 = "totalcom2.bin";
+    public static final String ERR_OPEN_APP = "Произошла ошибка при открытии программы";
+    public static final String ERR_OPEN_CREATE_WINDOW = "Не удалось открыть окно для ввода данных";
+    public static final String ERR_OPEN_SEARCH_WINDOW = "Не удалось открыть окно поиска";
+    public static final String ERR_OPEN_LISTER_WINDOW = "Не удалось открыть просмотрщик";
+    public static final String ERR_OPEN_HELP_WINDOW = "Не удалось открыть окно помощи";
+    public static final String HELP_WINDOW_NAME = "Горячие клавиши";
+    public static final String SEARCH_WINDOW_NAME = "Поиск файлов";
+    public static final String ERR_SEARCH = "Не удалось выполнить поиск";
+}

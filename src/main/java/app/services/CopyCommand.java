@@ -25,23 +25,7 @@ public class CopyCommand extends Command {
     @Override
     public void execute() throws IOException {
         Path pathTo = Paths.get(path).toAbsolutePath();
-        for (TCFile file : selectedFiles.filtered(tcFile -> !tcFile.isParent())) {
-            int index = 1;
-            String name = file.getName().replace("." + file.getType(), "");
-            String extension = file.getType();
-            Path newPath = Paths.get(path + "\\" + file.getName());
-            path = pathTo.toString();
-            if (Files.exists(newPath)) {
-                do {
-                    newPath = Paths.get(path + "\\" + name + "(" + index + ")." + extension);
-                    index++;
-                } while (Files.exists(newPath));
-            }
-            if (file.isDirectory()) {
-                FileUtils.copyDirectory(file, new File(newPath.toString()));
-            } else {
-                FileUtils.copyFile(file, new File(newPath.getParent().toString(), newPath.getFileName().toString()), true);
-            }
-        }
+        FileService.copyTo(selectedFiles, pathTo, path);
+
     }
 }

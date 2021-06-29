@@ -4,6 +4,7 @@ package app.controllers;
 import app.Main;
 import app.models.TCFile;
 import app.models.TCPanel;
+import app.constants.FileConstant;
 import app.services.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,6 +25,7 @@ import java.util.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.WindowEvent;
+import org.apache.log4j.Logger;
 
 public class FileController implements Initializable {
 
@@ -165,6 +167,7 @@ public class FileController implements Initializable {
     private TCPanel curPanel;
     protected int curListStoryLeftIndex = 0;
     protected int curListStoryRightIndex = 0;
+    private static final Logger log = Logger.getLogger(FileController.class);
 
     public void setMainApp(Main main) {
         this.main = main;
@@ -173,10 +176,10 @@ public class FileController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         File[] roots = File.listRoots();
-        homePath = System.getProperty("user.home") + "/Desktop";
+        homePath = System.getProperty(FileConstant.USER_HOME) + "/Desktop";
         try {
-            List<String> pathListLeft = FileService.readFromFile("totalcom1.bin");
-            List<String> pathListRight = FileService.readFromFile("totalcom2.bin");
+            List<String> pathListLeft = FileService.readFromFile(FileConstant.SAVE_FILE_1);
+            List<String> pathListRight = FileService.readFromFile(FileConstant.SAVE_FILE_2);
             panelLeft = new TCPanel(tableViewLeft, storyMenuButtonLeft, dirMenuButtonLeft, diskMenuButtonLeft,
                     dirInfoLabelSizeLeft, dirInfoLabelSizeFreeLeft, dirInfoLabelFilesSelectedLeft,
                     dirInfoLabelFilesLeft, dirInfoLabelDirSelectedLeft, dirInfoLabelDirLeft, diskInfoLabelLeft, null, pathListLeft, curListStoryLeftIndex);
@@ -186,22 +189,23 @@ public class FileController implements Initializable {
                     dirInfoLabelDirRight, diskInfoLabelRight, null, pathListRight, curListStoryRightIndex);
             panelLeft.createStoryMenu(handleStoryItemSelectEvent);
             panelRight.createStoryMenu(handleStoryItemSelectEvent);
-            TCFile homeDir = new TCFile(System.getProperty("user.home") + "\\Desktop");
-            panelLeft.createMenuItems(homeDir.getFileList(homeDir.getDirectories()), "Left", handleMoveToDirectoryEvent);
-            panelRight.createMenuItems(homeDir.getFileList(homeDir.getDirectories()), "Right", handleMoveToDirectoryEvent);
+            TCFile homeDir = new TCFile(System.getProperty(FileConstant.USER_HOME) + "\\Desktop");
+            panelLeft.createMenuItems(homeDir.getFileList(homeDir.getDirectories()), FileConstant.LEFT_ID, handleMoveToDirectoryEvent);
+            panelRight.createMenuItems(homeDir.getFileList(homeDir.getDirectories()), FileConstant.RIGHT_ID, handleMoveToDirectoryEvent);
             panelLeft.setTableViewData(imageTableColumnLeft, nameTableColumnLeft, typeTableColumnLeft, sizeTableColumnLeft, dateTableColumnLeft);
             panelRight.setTableViewData(imageTableColumnRight, nameTableColumnRight, typeTableColumnRight, sizeTableColumnRight, dateTableColumnRight);
             panelLeft.setDiskData(roots[0]);
             panelRight.setDiskData(roots[0]);
-            panelLeft.createDiskMenuItems(Arrays.asList(roots.clone()), "Left", handleMoveToDiskEvent);
-            panelRight.createDiskMenuItems(Arrays.asList(roots.clone()), "Right", handleMoveToDiskEvent);
+            panelLeft.createDiskMenuItems(Arrays.asList(roots.clone()), FileConstant.LEFT_ID, handleMoveToDiskEvent);
+            panelRight.createDiskMenuItems(Arrays.asList(roots.clone()), FileConstant.RIGHT_ID, handleMoveToDiskEvent);
             setListeners();
             setHandlers();
             curPanel = panelLeft;
+            curPanel.setSelected();
             FileService.goAndUpdate(panelLeft, panelLeft.getCurDir());
             FileService.goAndUpdate(panelRight, panelRight.getCurDir());
         } catch (IOException ioException) {
-            ioException.printStackTrace();
+            log.error(FileConstant.ERR_OPEN_APP);
         }
     }
 
@@ -263,9 +267,9 @@ public class FileController implements Initializable {
                 handleZipDirEvent.handle(keyEvent);
             } else if (keyEvent.isAltDown() && (keyCode == KeyCode.F4)) {
                 main.getPrimaryStage().close();
-            } else if (keyEvent.isAltDown() && keyCode == KeyCode.LEFT) {
+            } else if (keyEvent.isShiftDown() && keyCode == KeyCode.LEFT) {
                 handleBackEvent.handle(keyEvent);
-            } else if (keyEvent.isAltDown() && keyCode == KeyCode.RIGHT) {
+            } else if (keyEvent.isShiftDown() && keyCode == KeyCode.RIGHT) {
                 handleForwardEvent.handle(keyEvent);
             } else if (keyEvent.isShiftDown() && (keyCode == KeyCode.DELETE || keyCode == KeyCode.F8)) {
                 handleDeleteFilesHardEvent.handle(keyEvent);
@@ -307,13 +311,14 @@ public class FileController implements Initializable {
             TCFile directory;
             try {
                 directory = new TCFile(path);
-                if (item.getId().contains("Left")) {
+                if (item.getId().contains(FileConstant.LEFT_ID)) {
                     new SelectStoryItemCommand(panelLeft, curPanel, item, directory, handleStoryItemSelectEvent).execute();
                 } else {
                     new SelectStoryItemCommand(panelRight, curPanel, item, directory, handleStoryItemSelectEvent).execute();
                 }
             } catch (IOException exception) {
-                FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось перейти в каталог", "Каталог не существует или программа не имеет прав на данную операцию", true);
+                FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DIR, FileConstant.ERR_DIR_EXP, true);
+                log.error(FileConstant.ERR_DIR);
             }
         }
     };
@@ -336,8 +341,10 @@ public class FileController implements Initializable {
             label2.setText("файлов: " + filesCount + " из ");
             label3.setText("папок: " + dirCount + " из ");
             if (!tableView.equals(curPanel.getTableView())) {
+                curPanel.setUnselected();
                 curPanel = curPanel.isActiveLeft() ? panelRight : panelLeft;
             }
+            curPanel.setSelected();
         });
     }
 
@@ -348,29 +355,15 @@ public class FileController implements Initializable {
                 if (event.getClickCount() == 2) {
                     TCFile file = row.getItem();
                     if (file.isDirectory()) {
-                        try {
-                            if (row.getTableView().getId().contains("Left")) {
-                                new MoveCommand(panelLeft, curPanel, file, handleStoryItemSelectEvent).execute();
-                            } else {
-                                new MoveCommand(panelRight, curPanel, file, handleStoryItemSelectEvent).execute();
-                            }
-                        } catch (IOException | NullPointerException e) {
-                            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось перейти в директорию", "Директория не существует или программа не имеет прав данную операцию", true);
-                        }
+                        moveToDirectory(row, file);
                     } else {
-                        try {
-                            new OpenCommand(null, Arrays.asList("cmd.exe", "/c", file.getAbsolutePath())).execute();
-                        } catch (IOException | NullPointerException e) {
-                            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Ошибка открытия файла", "Не удалось открфть файл", true);
-                        }
+                        openFile(file);
                     }
                 }
             });
             return row;
         });
     }
-
-    //Handlers
 
     private final EventHandler<Event> handleSelectFilesEvent = e -> selectedItems = curPanel.getTableView().getSelectionModel().getSelectedItems();
 
@@ -380,18 +373,16 @@ public class FileController implements Initializable {
         String labelText;
         String path;
         if (count != 0) {
-            if (count > 1) {
-                labelText = "Копировать файлы (" + count + ") в:";
-            } else {
-                labelText = "Копировать файл " + selectedFiles.get(0).getName() + " в:";
-            }
+            labelText = count > 1 ? FileConstant.COPY_FILES + " (" + count + ") в:"
+                    : FileConstant.COPY_FILE + selectedFiles.get(0).getName() + " в:";
             path = main.initCreateWindow(labelText, curPanel.getCurDir().getPath());
             try {
                 if (!path.isEmpty()) {
                     new CopyCommand(curPanel, path, selectedFiles).execute();
                 }
             } catch (IOException ioException) {
-                FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось копировать файл(-ы)", "Программа не имеет прав на данную операцию", true);
+                FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_COPY, FileConstant.ERR_COM_EXP, true);
+                log.error(FileConstant.ERR_COPY);
             }
             FileService.refreshTableViewAfterCreateOperation(panelLeft, panelLeft.getCurDir());
             FileService.refreshTableViewAfterCreateOperation(panelRight, panelRight.getCurDir());
@@ -405,7 +396,8 @@ public class FileController implements Initializable {
                 FileService.refreshTableViewAfterCreateOperation(panelLeft, panelLeft.getCurDir());
                 FileService.refreshTableViewAfterCreateOperation(panelRight, panelRight.getCurDir());
             } catch (IOException ioException) {
-                FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось копировать файл(-ы)", "Программа не имеет прав на данную операцию", true);
+                FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_COPY, FileConstant.ERR_COM_EXP, true);
+                log.error(FileConstant.ERR_COPY);
             }
         }
     };
@@ -417,44 +409,48 @@ public class FileController implements Initializable {
         TCFile file = files.get(0);
         try {
             if (files.size() == 1) {
-                textField = file.isDirectory() ? file.getAbsolutePath() + ".zip" : file.getParent() + "\\" + file.getName().substring(0, file.getName().indexOf(".")) + ".zip";
+                textField = file.isDirectory() ? file.getAbsolutePath() + FileConstant.ZIP_EXT : file.getParent() + "\\" + file.getName().substring(0, file.getName().indexOf(".")) + FileConstant.ZIP_EXT;
                 path = main.initCreateWindow("Упаковать файлы (1 шт) в архив:", textField);
                 files = (ObservableList<TCFile>) file.getFileList(file.listFiles());
             } else {
-                textField = file.getParent() + ".zip";
+                textField = file.getParent() + FileConstant.ZIP_EXT;
                 path = main.initCreateWindow("Упаковать файлы (" + files.size() + " шт) в архив:", textField);
             }
             new ZipCommand(curPanel, files, file, path).execute();
         } catch (IOException ioException) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось упаковать файл(-ы)", "Файл не существует или программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_ZIP, FileConstant.ERR_OPEN_EXP, true);
+            log.error(FileConstant.ERR_ZIP);
         }
     };
 
     private final EventHandler<Event> handleUnzipDirEvent = e -> {
         TCFile file = curPanel.getTableView().getFocusModel().getFocusedItem();
-        String path = main.initCreateWindow("Распаковать архив в:", file.getAbsolutePath().substring(0, file.getAbsolutePath().indexOf(".zip")));
+        String path = main.initCreateWindow(FileConstant.UNZIP, file.getAbsolutePath().substring(0, file.getAbsolutePath().indexOf(FileConstant.ZIP_EXT)));
         try {
             new UnzipCommand(curPanel, path, file).execute();
         } catch (IOException | IllegalArgumentException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Zip Emulator Total Commander", "Не удалось распаковать файл", "Файл не является архивом", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_UNZIP, FileConstant.ERR_UNZIP_EXP, true);
+            log.error(FileConstant.ERR_UNZIP);
         }
     };
 
     private final EventHandler<Event> handleCreateFileEvent = e -> {
-        String path = main.initCreateWindow("Создать новый файл:", "");
+        String path = main.initCreateWindow(FileConstant.CREATE_FILE, "");
         try {
             new CreateCommand(curPanel, path, true).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось создать файл", "Файл уже существует или программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_CREATE_FILE, FileConstant.ERR_OPEN_EXP, true);
+            log.error(FileConstant.ERR_CREATE_FILE);
         }
     };
 
     private final EventHandler<Event> handleCreateDirEvent = e -> {
-        String path = main.initCreateWindow("Создать новый каталог:", "");
+        String path = main.initCreateWindow(FileConstant.CREATE_DIR, "");
         try {
             new CreateCommand(curPanel, path, false).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось создать файл", "Файл уже существует или программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_CREATE_DIR, FileConstant.ERR_CREATE_DIR_EXP, true);
+            log.error(FileConstant.ERR_CREATE_DIR);
         }
     };
 
@@ -462,7 +458,8 @@ public class FileController implements Initializable {
         try {
             new DeleteCommand(panelLeft, panelRight, true).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось удалить файл(-ы)", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DEL, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_DEL);
         }
     };
 
@@ -470,7 +467,8 @@ public class FileController implements Initializable {
         try {
             new DeleteCommand(panelLeft, panelRight, false).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось удалить файл(-ы)", "Программа не имеет прав на данную оперецию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DEL, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_DEL);
         }
     };
 
@@ -478,6 +476,7 @@ public class FileController implements Initializable {
         try {
             new MoveForwardCommand(curPanel, handleStoryItemSelectEvent).execute();
         } catch (IOException ignored) {
+            log.error(FileConstant.ERR_DIR);
         }
     };
 
@@ -485,27 +484,30 @@ public class FileController implements Initializable {
         try {
             new MoveBackCommand(curPanel, handleStoryItemSelectEvent).execute();
         } catch (IOException ignored) {
+            log.error(FileConstant.ERR_DIR);
         }
     };
 
     private final EventHandler<Event> handleRenameMoveEvent = e -> {
         TCFile file = curPanel.getTableView().getFocusModel().getFocusedItem();
-        String path = main.initCreateWindow("Переименовать/переместить файл в:", file.getAbsolutePath());
+        String path = main.initCreateWindow(FileConstant.COPY_RENAME, file.getAbsolutePath());
         try {
-            if (!path.isEmpty() && !file.isParent()) {
+            if (!path.isEmpty() && file.isNotParent()) {
                 new RenameMoveCommand(null, file, Paths.get(path)).execute();
             }
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось переименовать/переместить файл", "Файл с таким именем уже существует", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_COPY_RENAME, FileConstant.ERR_COPY_RENAME_EXP, true);
+            log.error(FileConstant.ERR_COPY_RENAME);
         }
     };
 
     private final EventHandler<Event> handleEditFileEvent = e -> {
         TCFile file = curPanel.getTableView().getFocusModel().getFocusedItem();
         try {
-            new OpenCommand(null, Arrays.asList("cmd.exe", "/c", "start", file.getAbsolutePath())).execute();
+            new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, FileConstant.START, file.getAbsolutePath())).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть файл для редактирования", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_EDIT, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_EDIT);
         }
     };
 
@@ -513,14 +515,15 @@ public class FileController implements Initializable {
         try {
             new SaveCommand(panelLeft, panelRight).execute();
         } catch (IOException exception) {
-            exception.printStackTrace();
+            log.error(FileConstant.ERR_CLOSE);
         }
     };
 
     private final EventHandler<Event> handleExitEvent = e -> {
         try {
             new SaveCommand(panelLeft, panelRight).execute();
-        } catch (IOException ignored) {
+        } catch (IOException exception) {
+            log.error(FileConstant.ERR_CLOSE);
         }
         main.getPrimaryStage().close();
     };
@@ -535,13 +538,14 @@ public class FileController implements Initializable {
         }
         try {
             TCFile directory = new TCFile(homePath + "\\" + path);
-            if (item.getId().contains("Left")) {
+            if (item.getId().contains(FileConstant.LEFT_ID)) {
                 new MoveCommand(panelLeft, curPanel, directory, handleStoryItemSelectEvent).execute();
             } else {
                 new MoveCommand(panelRight, curPanel, directory, handleStoryItemSelectEvent).execute();
             }
         } catch (IOException | NullPointerException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось перейти в директорию", "Директория не существует или программа не имеет прав данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DIR, FileConstant.ERR_DIR_EXP, true);
+            log.error(FileConstant.ERR_DIR);
         }
     };
 
@@ -551,13 +555,14 @@ public class FileController implements Initializable {
         TCFile directory;
         try {
             directory = new TCFile(path);
-            if (item.getId().contains("Left")) {
+            if (item.getId().contains(FileConstant.LEFT_ID)) {
                 new MoveCommand(panelLeft, curPanel, directory, handleStoryItemSelectEvent).execute();
             } else {
                 new MoveCommand(panelRight, curPanel, directory, handleStoryItemSelectEvent).execute();
             }
         } catch (IOException | NullPointerException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось перейти на диск", "Выберите другой диск", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DISK, FileConstant.ERR_DISK_EXP, true);
+            log.error(FileConstant.ERR_DISK);
         }
     };
 
@@ -571,9 +576,10 @@ public class FileController implements Initializable {
                 main.initListerImage("Lister " + file.getPath(), file.toURI().toString());
             } else {
                 try {
-                    new OpenCommand(null, Arrays.asList("cmd.exe", "/c", "start", file.getAbsolutePath())).execute();
+                    new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, FileConstant.START, file.getAbsolutePath())).execute();
                 } catch (IOException ioException) {
-                    FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть файл", "Файл не существует или программа не имеет прав на данную операцию", true);
+                    FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_OPEN, FileConstant.ERR_OPEN_EXP, true);
+                    log.error(FileConstant.ERR_OPEN);
                 }
             }
         }
@@ -582,14 +588,15 @@ public class FileController implements Initializable {
     private final EventHandler<ActionEvent> handleMoveToRootEvent = e -> {
         Button button = (Button) e.getTarget();
         try {
-            if (button.getId().contains("Left")) {
+            if (button.getId().contains(FileConstant.LEFT_ID)) {
                 TCFile root = new TCFile(Paths.get(panelLeft.getCurDir().getAbsolutePath()).getRoot().toString());
                 new MoveCommand(panelLeft, curPanel, root, handleStoryItemSelectEvent).execute();
             } else {
                 TCFile root = new TCFile(Paths.get(panelLeft.getCurDir().getAbsolutePath()).getRoot().toString());
                 new MoveCommand(panelRight, curPanel, root, handleStoryItemSelectEvent).execute();
             }
-        } catch (IOException | NullPointerException ignored) {
+        } catch (IOException | NullPointerException exception) {
+            log.error(FileConstant.ERR_DIR);
         }
     };
 
@@ -602,7 +609,8 @@ public class FileController implements Initializable {
                 TCFile root = new TCFile(Paths.get(panelRight.getCurDir().getAbsolutePath()).getRoot().toString());
                 new MoveCommand(panelRight, curPanel, root, handleStoryItemSelectEvent).execute();
             }
-        } catch (IOException | NullPointerException ignored) {
+        } catch (IOException | NullPointerException exception) {
+            log.error(FileConstant.ERR_DIR);
         }
     };
 
@@ -611,20 +619,22 @@ public class FileController implements Initializable {
         try {
             if (curPanel.getCurDir().getParent() != null) {
                 TCFile parent = new TCFile(curPanel.getCurDir().getParent());
-                if (button.getId().contains("Left")) {
+                if (button.getId().contains(FileConstant.LEFT_ID)) {
                     new MoveCommand(panelLeft, curPanel, parent, handleStoryItemSelectEvent).execute();
                 } else {
                     new MoveCommand(panelRight, curPanel, parent, handleStoryItemSelectEvent).execute();
                 }
             }
-        } catch (IOException | NullPointerException ignored) {
+        } catch (IOException | NullPointerException exception) {
+            log.error(FileConstant.ERR_DIR);
         }
     };
 
     private final EventHandler<Event> handleRefreshEvent = e -> {
         try {
             new RefreshCommand(curPanel, handleMoveToDiskEvent).execute();
-        } catch (IOException ignore) {
+        } catch (IOException exception) {
+            log.error(FileConstant.ERR_REFRESH);
         }
     };
 
@@ -642,44 +652,71 @@ public class FileController implements Initializable {
                     curPanel.getTableView().getSelectionModel().select(file);
                 }
             } catch (IOException | NullPointerException exception) {
-                FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось перейти в каталог", "Каталог не существует или программа не имеет прав на данную операцию", true);
+                FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DIR, FileConstant.ERR_DIR_EXP, true);
+                log.error(FileConstant.ERR_DIR);
             }
         }
     };
 
     private final EventHandler<Event> handleOpenCmdEvent = e -> {
         try {
-            new OpenCommand(null, Arrays.asList("cmd.exe", "/c", "start")).execute();
+            new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, FileConstant.START)).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть командную строку", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_CMD, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_CMD);
         }
     };
 
     private final EventHandler<Event> handleOpenTrashEvent = e -> {
         try {
-            new OpenCommand(null, Arrays.asList("cmd.exe", "/c", "start shell:RecycleBinFolder")).execute();
+            new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, FileConstant.OPEN_BIN)).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть Корзину", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_TRASH, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_TRASH);
         }
     };
 
     private final EventHandler<Event> handleOpenControlEvent = e -> {
         try {
-            new OpenCommand(null, Arrays.asList("cmd.exe", "/c", "start control")).execute();
+            new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, FileConstant.OPEN_CONTROL)).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть панель управления", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_CONTROL, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_CONTROL);
         }
     };
 
     private final EventHandler<Event> handleOpenNotepadEvent = e -> {
         try {
-            new OpenCommand(null, Collections.singletonList("Notepad.exe")).execute();
+            new OpenCommand(null, Collections.singletonList(FileConstant.NOTEPAD)).execute();
         } catch (IOException exception) {
-            FileService.initAlert(main.getPrimaryStage(), "Emulator Total Commander", "Не удалось открыть Блокнот", "Программа не имеет прав на данную операцию", true);
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_NOTEPAD, FileConstant.ERR_COM_EXP, true);
+            log.error(FileConstant.ERR_NOTEPAD);
         }
     };
 
     private final EventHandler<Event> handleHelpEvent = e -> main.initHelpWindow();
 
-    private final EventHandler<Event> handleAboutEvent = e -> FileService.initAlert(main.getPrimaryStage(), "O программе Emulator Total Commander", "О программе", "Emulator Total Commander, версия 1.0\nАвтор: Жук А.Д.", false);
+    private final EventHandler<Event> handleAboutEvent = e -> FileService.initAlert(main.getPrimaryStage(), FileConstant.ABOUT_TOTAL_COM, FileConstant.ABOUT, FileConstant.DESCRIPTION, false);
+
+    private void moveToDirectory(TableRow<TCFile> row, TCFile file){
+        try {
+            if (row.getTableView().getId().contains(FileConstant.LEFT_ID)) {
+                new MoveCommand(panelLeft, curPanel, file, handleStoryItemSelectEvent).execute();
+            } else {
+                new MoveCommand(panelRight, curPanel, file, handleStoryItemSelectEvent).execute();
+            }
+        } catch (IOException | NullPointerException e) {
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_DIR, FileConstant.ERR_DIR_EXP, true);
+            log.error(FileConstant.ERR_DIR);
+        }
+    }
+
+    private void openFile(TCFile file){
+        try {
+            new OpenCommand(null, Arrays.asList(FileConstant.CMD, FileConstant.C, file.getAbsolutePath())).execute();
+        } catch (IOException | NullPointerException e) {
+            FileService.initAlert(main.getPrimaryStage(), FileConstant.APP_NAME, FileConstant.ERR_OPEN, FileConstant.ERR_OPEN, true);
+            log.error(FileConstant.ERR_OPEN);
+        }
+    }
 }

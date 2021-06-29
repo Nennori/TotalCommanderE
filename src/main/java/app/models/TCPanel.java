@@ -232,4 +232,12 @@ public class TCPanel extends FileController {
             storyMenuButton.getItems().add(item);
         }
     }
+
+    public void setSelected(){
+        dirMenuButton.setStyle("-fx-background-color: rgb(130, 157, 188);");
+    }
+
+    public void setUnselected(){
+        dirMenuButton.setStyle("-fx-background-color: rgb(175, 199, 227); ");
+    }
 }

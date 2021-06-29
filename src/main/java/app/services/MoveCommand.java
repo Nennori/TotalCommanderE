@@ -23,7 +23,9 @@ public class MoveCommand extends Command {
     @Override
     public void execute() throws IOException, NullPointerException {
         FileService.goAndUpdate(panel, directory);
+        curPanel.setUnselected();
         curPanel = panel;
+        curPanel.setSelected();
         panel.updateStoryMenu(directory.getAbsolutePath(), handleStoryItemSelectEvent);
     }
 }

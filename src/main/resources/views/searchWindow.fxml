@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+
+
+<AnchorPane minHeight="352.0" minWidth="554.0" prefHeight="352.0" prefWidth="554.0" stylesheets="@main.css"
+            xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="app.controllers.SearchWindowController">
+    <HBox maxWidth="1.7976931348623157E308" prefHeight="96.0" prefWidth="554.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Pane maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="119.0"
+              prefWidth="434.0">
+            <Pane layoutX="8.0" layoutY="25.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="419.0">
+                <TextField fx:id="searchFileField" layoutX="92.0" layoutY="1.0" maxWidth="1.7976931348623157E308"
+                           minWidth="-Infinity" prefHeight="25.0" prefWidth="329.0"/>
+                <Label layoutX="7.0" layoutY="5.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" text="Искать файлы:"/>
+            </Pane>
+            <Pane layoutX="8.0" layoutY="60.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="419.0">
+                <TextField fx:id="searchDirField" layoutX="92.0" layoutY="1.0" maxWidth="1.7976931348623157E308"
+                           minWidth="-Infinity" prefHeight="25.0" prefWidth="329.0"/>
+                <Label layoutX="7.0" layoutY="5.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" text="Место поиска:"/>
+            </Pane>
+            <Pane layoutX="8.0" layoutY="96.0" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="419.0">
+                <Label layoutX="7.0" layoutY="5.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                       minWidth="-Infinity" text="Глубина вложенности подкаталогов"/>
+                <ComboBox fx:id="levelComboBox" layoutX="240.0" prefHeight="26.0" prefWidth="179.0"/>
+            </Pane>
+        </Pane>
+        <Pane maxWidth="-Infinity" prefHeight="141.0" prefWidth="123.0" HBox.hgrow="SOMETIMES">
+            <Button fx:id="startButton" layoutX="9.0" layoutY="21.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                    minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0"
+                    prefWidth="99.0" styleClass="search-button" text="Начать поиск"/>
+            <Button fx:id="cancelButton" layoutX="9.0" layoutY="54.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                    minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0"
+                    prefWidth="99.0" styleClass="search-button" text="Отмена"/>
+        </Pane>
+    </HBox>
+    <Pane layoutX="-7.0" layoutY="126.0" prefHeight="226.0" prefWidth="554.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <ListView fx:id="resultsListView" layoutX="16.0" layoutY="29.0" prefHeight="160.0" prefWidth="522.0"/>
+        <Label layoutX="16.0" layoutY="6.0" text="Результаты поиска:"/>
+        <Button fx:id="reviewButton" layoutX="16.0" layoutY="195.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0"
+                styleClass="search-button" text="F3 Просмотр"/>
+        <Button fx:id="editButton" layoutX="122.0" layoutY="195.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0"
+                styleClass="search-button" text="F4 Правка"/>
+        <Button fx:id="goToButton" layoutX="228.0" layoutY="195.0" maxHeight="-Infinity" maxWidth="-Infinity"
+                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="120.0"
+                styleClass="search-button" text="Перейти к файлу"/>
+    </Pane>
+</AnchorPane>

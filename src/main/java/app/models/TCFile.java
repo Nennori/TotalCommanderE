@@ -1,10 +1,13 @@
 package app.models;
 
-import app.resources.Extension;
-import app.resources.ExtensionImage;
+import app.constants.Extension;
+import app.constants.ExtensionImage;
+import app.constants.FileConstant;
+import app.controllers.FileController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +34,7 @@ public class TCFile extends File {
 
     private static final String DATE_FORMAT_DD_MM_YYYY_HH_MM = "dd.MM.yyyy HH:mm";
     private static final HashMap<String, String> typeImages = new HashMap<>();
+    private static final Logger log = Logger.getLogger(TCFile.class);
 
     static {
         typeImages.put(Extension.FOLDER, ExtensionImage.FOLDER_TYPE);
@@ -75,14 +79,6 @@ public class TCFile extends File {
         typeImages.put(Extension.INI, ExtensionImage.INI_TYPE);
         typeImages.put(Extension.UNKNOWN, ExtensionImage.UNKNOWN_TYPE);
         typeImages.put(Extension.PARENT, ExtensionImage.PARENT_TYPE);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if ((obj instanceof TCFile)) {
-            return compareTo((File)obj) == 0;
-        }
-        return false;
     }
 
     private String getCreationTime(String path) throws IOException {
@@ -166,8 +162,8 @@ public class TCFile extends File {
         return size.get();
     }
 
-    public boolean isParent() {
-        return isParent;
+    public boolean isNotParent() {
+        return !isParent;
     }
 
     public void setParent(boolean parent) {
@@ -176,13 +172,13 @@ public class TCFile extends File {
 
     public Long getDirLength() {
         File[] files = this.listFiles();
-        long size = 0L;
+        long dirSize = 0L;
         if (files != null) {
             for (File file : files) {
-                size += file.length();
+                dirSize += file.length();
             }
         }
-        return size;
+        return dirSize;
     }
 
     public String getDate() {
@@ -200,9 +196,8 @@ public class TCFile extends File {
                     files.add(new TCFile(sourceFile.getParent(), sourceFile.getName()));
                 }
             }
-            return files;
         }
-        return null;
+        return files;
     }
 
     public File[] getDirectories() {
@@ -230,6 +225,7 @@ public class TCFile extends File {
                 }
             });
         } catch (IOException ignored) {
+            log.error(FileConstant.ERR_DIR_SIZE);
         }
         return size;
     }
@@ -261,6 +257,7 @@ public class TCFile extends File {
                 }
             });
         } catch (IOException ignored) {
+            log.error(FileConstant.ERR_DIR);
         }
         count.getAndDecrement();
         return count;
@@ -272,29 +269,30 @@ public class TCFile extends File {
         try {
             Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     count.addAndGet(1);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException e) {
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ignored) {
+            log.error(FileConstant.ERR_FILE_COUNT);
         }
         return count;
     }
 
     public boolean isImage() {
         switch(type.get()){
-            case "jpeg":
-            case "jpg":
-            case "bmp":
-            case "png":
-            case "gif":
-            case "tif":
+            case Extension.JPEG:
+            case Extension.JPG:
+            case Extension.BMP:
+            case Extension.PNG:
+            case Extension.GIF:
+            case Extension.TIF:
                 return true;
             default:
                 return false;

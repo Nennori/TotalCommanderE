@@ -1,5 +1,6 @@
 package app.services;
 
+import app.constants.FileConstant;
 import app.models.TCFile;
 import app.models.TCPanel;
 import javafx.collections.ObservableList;
@@ -8,8 +9,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
-import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -23,6 +24,8 @@ import java.util.zip.ZipOutputStream;
 
 public class FileService implements Serializable {
 
+    private static final Logger log = Logger.getLogger(FileService.class);
+
     public static void initAlert(Stage primaryStage, String title, String headerText, String contentText, boolean isWarning) {
         Alert alert = isWarning ? new Alert(Alert.AlertType.WARNING, contentText, ButtonType.OK) : new Alert(Alert.AlertType.INFORMATION, contentText, ButtonType.OK);
         alert.initOwner(primaryStage);
@@ -31,34 +34,57 @@ public class FileService implements Serializable {
         alert.showAndWait();
     }
 
-    public static void deleteFiles(TableView<TCFile> table, boolean safe) throws IOException {
-        ObservableList<TCFile> selectedDelItems = (table.getSelectionModel().getSelectedItems());
-        com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
-        if (!selectedDelItems.isEmpty()) {
-            if (safe) {
-                if (fileUtils.hasTrash()) {
-//                    Desktop.getDesktop().;
-                    for (TCFile file : selectedDelItems) {
-                        fileUtils.moveToTrash(file);
-                        table.getItems().remove(file);
-                    }
-                }
+    public static void copyTo(ObservableList<TCFile> selectedFiles, Path pathTo, String path) throws IOException {
+        for (TCFile file : selectedFiles.filtered(TCFile::isNotParent)) {
+            int index = 1;
+            String name = file.getName().replace("." + file.getType(), "");
+            String extension = file.getType();
+            Path newPath = Paths.get(path + '\\' + file.getName());
+            path = pathTo.toString();
+            if (Files.exists(newPath)) {
+                do {
+                    newPath = Paths.get(path + '\\' + name + "(" + index + ")." + extension);
+                    index++;
+                } while (Files.exists(newPath));
+            }
+            if (file.isDirectory()) {
+                FileUtils.copyDirectory(file, new File(newPath.toString()));
             } else {
-                for (TCFile file : selectedDelItems) {
-                    if (file.isDirectory()) {
-                        FileUtils.deleteDirectory(file);
-                    } else {
-                        FileUtils.forceDelete(file);
-                    }
-                    table.getItems().remove(file);
-                }
+                FileUtils.copyFile(file, new File(newPath.getParent().toString(), newPath.getFileName().toString()), true);
             }
         }
     }
 
-    public static void reviewFile(TCFile file) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", file.getAbsolutePath());
-        pb.start();
+    public static void deleteFiles(TableView<TCFile> table, boolean safe) throws IOException {
+        ObservableList<TCFile> selectedDelItems = (table.getSelectionModel().getSelectedItems());
+        if (!selectedDelItems.isEmpty()) {
+            if (safe) {
+                safeDelete(table, selectedDelItems);
+            } else {
+                hardDelete(table, selectedDelItems);
+            }
+        }
+    }
+
+    public static void safeDelete(TableView<TCFile> table, List<TCFile> selectedDelItems) throws IOException {
+        com.sun.jna.platform.FileUtils fileUtils = com.sun.jna.platform.FileUtils.getInstance();
+        if (fileUtils.hasTrash()) {
+            for (TCFile file : selectedDelItems) {
+                fileUtils.moveToTrash(file);
+                table.getItems().remove(file);
+            }
+        }
+    }
+
+    public static void hardDelete(TableView<TCFile> table, List<TCFile> selectedDelItems) throws IOException {
+        for (TCFile file : selectedDelItems) {
+            if (file.isDirectory()) {
+                FileUtils.deleteDirectory(file);
+            } else {
+                FileUtils.forceDelete(file);
+            }
+            table.getItems().remove(file);
+        }
     }
 
     public static String getDirInfo(TCFile directory) {
@@ -68,11 +94,11 @@ public class FileService implements Serializable {
                 + TCFile.getDirCount(directory) + ".\n\n";
     }
 
-    public static void doZip(List<TCFile> files, ZipOutputStream out, Path parentDir) throws IOException {
+    public static void zip(List<TCFile> files, ZipOutputStream out, Path parentDir) throws IOException {
         Path filePath;
         for (TCFile f : files) {
             if (f.isDirectory()) {
-                doZip(f.getFileList(f.listFiles()), out, parentDir);
+                zip(f.getFileList(f.listFiles()), out, parentDir);
             } else {
                 filePath = Paths.get(f.getPath());
                 out.putNextEntry(new ZipEntry(parentDir.relativize(filePath).toString()));
@@ -91,9 +117,9 @@ public class FileService implements Serializable {
 
     public static void unzip(File file, String parentPath) {
         try (ZipFile zip = new ZipFile(file.getPath())) {
-            Enumeration entries = zip.entries();
+            Enumeration<? extends ZipEntry> entries = zip.entries();
             while (entries.hasMoreElements()) {
-                ZipEntry entry = (ZipEntry) entries.nextElement();
+                ZipEntry entry = entries.nextElement();
                 if (entry.isDirectory()) {
                     new File(parentPath, entry.getName()).mkdirs();
                 } else {
@@ -102,7 +128,9 @@ public class FileService implements Serializable {
                                     new File(parentPath, entry.getName()))));
                 }
             }
-        } catch (IOException ignored) { }
+        } catch (IOException e) {
+            log.error(FileConstant.ERR_UNZIP);
+        }
     }
 
     public static void writeOut(InputStream in, OutputStream out) throws IOException {
@@ -115,7 +143,7 @@ public class FileService implements Serializable {
     }
 
     public static void saveToFile(String filename, List<String> paths) throws IOException {
-        try(FileOutputStream fileOutputStream = new FileOutputStream(filename, false); ObjectOutputStream objOut = new ObjectOutputStream(fileOutputStream)){
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filename, false); ObjectOutputStream objOut = new ObjectOutputStream(fileOutputStream)) {
             for (String path : paths) {
                 objOut.writeObject(path);
             }
@@ -160,15 +188,16 @@ public class FileService implements Serializable {
         if (newFile.getPath().contains(panel.getCurDir().getAbsolutePath())) {
             try {
                 goAndUpdate(panel, panel.getCurDir());
-            } catch (IOException ignored) {
+            } catch (IOException e) {
+                log.error(e.getMessage());
             }
         }
     }
 
     public static void save(List<String> pathListLeft, List<String> pathListRight) {
         try {
-            saveToFile("totalcom1.bin", pathListLeft);
-            saveToFile("totalcom2.bin", pathListRight);
+            saveToFile(FileConstant.SAVE_FILE_1, pathListLeft);
+            saveToFile(FileConstant.SAVE_FILE_2, pathListRight);
         } catch (IOException classNotFoundException) {
             classNotFoundException.printStackTrace();
         }
@@ -196,25 +225,27 @@ public class FileService implements Serializable {
         if (!zip.exists()) {
             ZipOutputStream out;
             out = new ZipOutputStream(new FileOutputStream(zip));
-            doZip(files, out, Paths.get(file.getParent()));
+            zip(files, out, Paths.get(file.getParent()));
             out.close();
             tableView.getItems().add(zip);
         }
     }
 
-    public static void searchFiles(TCFile file, ObservableList<Path> files, String key, Integer max) {
+    public static void searchFiles(TCFile file, ObservableList<Path> files, String key, Integer max) throws IOException {
         Path path = Paths.get(file.getPath());
-        try {
+            String finalKey = key.toLowerCase();
             Files.walkFileTree(path, EnumSet.of(FileVisitOption.FOLLOW_LINKS), max, new FileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    if (dir.getFileName().toString().contains(key)) files.add(dir);
+                    if (dir.getFileName().toString().toLowerCase().contains(finalKey)) {
+                        files.add(dir);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (file.getFileName().toString().contains(key)) {
+                    if (file.getFileName().toString().toLowerCase().contains(finalKey)) {
                         files.add(file);
                     }
                     return FileVisitResult.CONTINUE;
@@ -230,9 +261,6 @@ public class FileService implements Serializable {
                     return FileVisitResult.CONTINUE;
                 }
             });
-        } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 
 }

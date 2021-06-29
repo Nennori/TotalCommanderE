@@ -1,6 +1,7 @@
-package app.resources;
+package app.constants;
 
 public final class Extension {
+    private Extension() { }
     public static final String FOLDER = "folder";
     public static final String TXT = "txt";
     public static final String PDF = "pdf";
