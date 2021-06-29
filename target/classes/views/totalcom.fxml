@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox minHeight="56.0" minWidth="78.0" prefHeight="551.0" prefWidth="827.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.controllers.FileController">
+    <HBox>
+        <MenuBar prefHeight="25.0" prefWidth="572.0" style="-fx-padding: 0;" styleClass="background">
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <Menu mnemonicParsing="false" text="Файлы">
+                <MenuItem fx:id="packMenuItem" mnemonicParsing="false" text="Упаковать...       Alt+F5">
+                    <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/121.png" />
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem fx:id="unpackMenuItem" mnemonicParsing="false" text="Распаковать...   Alt+F9">
+                    <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/125.png" />
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="Выход               Alt+F4" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Команды">
+                <MenuItem fx:id="searchMenuItem" mnemonicParsing="false" text="Поиск файлов...     Alt+F7">
+                    <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/189.png" />
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem fx:id="backMenuItem" mnemonicParsing="false" text="Назад                     Alt+&lt;-">
+                    <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/2302.png" />
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem fx:id="cmdMenuItem" mnemonicParsing="false" text="Открыть командную консоль" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Вид">
+                <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" text="Обновить содержимое панели">
+                    <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/181.png" />
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+            </Menu>
+        </MenuBar>
+        <Region maxWidth="1.7976931348623157E308" prefHeight="0.0" prefWidth="174.0" styleClass="background" HBox.hgrow="SOMETIMES" />
+        <MenuBar style="-fx-padding: 0;" styleClass="background" HBox.hgrow="NEVER">
+            <Menu mnemonicParsing="false" text="Справка">
+                <MenuItem fx:id="helpMenuItem" mnemonicParsing="false" text="Горячие клавиши">
+                    <graphic>
+                        <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
+                            <Image url="@../img/237.png" />
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <SeparatorMenuItem mnemonicParsing="false" />
+                <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="О программе" />
+            </Menu>
+        </MenuBar>
+    </HBox>
+    <FlowPane prefHeight="28.0" prefWidth="827.0" styleClass="background">
+        <Button fx:id="refreshButton" alignment="CENTER" contentDisplay="CENTER" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" textAlignment="CENTER">
+            <FlowPane.margin>
+                <Insets left="6.0" />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView cache="true" fitHeight="27.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/181.png" />
+                </ImageView>
+            </graphic>
+            <styleClass>
+                <String fx:value="background" />
+                <String fx:value="button" />
+            </styleClass>
+            <tooltip>
+                <Tooltip text="Обновить содержимое панели" />
+            </tooltip>
+        </Button>
+        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <FlowPane.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </FlowPane.margin>
+        </Separator>
+        <Button fx:id="backButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="background">
+            <FlowPane.margin>
+                <Insets />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" nodeOrientation="RIGHT_TO_LEFT" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/2302.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Назад" />
+            </tooltip>
+        </Button>
+        <Button fx:id="forwardButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="background">
+            <FlowPane.margin>
+                <Insets />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/2302.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Вперед" />
+            </tooltip>
+        </Button>
+        <Separator orientation="VERTICAL" prefHeight="8.0" prefWidth="0.0">
+            <FlowPane.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </FlowPane.margin>
+        </Separator>
+        <Button fx:id="packButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="background">
+            <FlowPane.margin>
+                <Insets />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView fitHeight="19.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/121.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Упаковать файлы" />
+            </tooltip>
+        </Button>
+        <Button fx:id="extractButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="background">
+            <FlowPane.margin>
+                <Insets />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView fitHeight="19.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/125.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Распаковать файлы" />
+            </tooltip>
+        </Button>
+        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <FlowPane.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </FlowPane.margin>
+        </Separator>
+        <Button fx:id="searchButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="background">
+            <FlowPane.margin>
+                <Insets />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView fitHeight="23.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/189.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Поиск" />
+            </tooltip>
+        </Button>
+        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <FlowPane.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </FlowPane.margin>
+        </Separator>
+        <Button fx:id="notepadButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="background">
+            <FlowPane.margin>
+                <Insets />
+            </FlowPane.margin>
+            <graphic>
+                <ImageView fitHeight="24.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                    <Image url="@../img/349.png" />
+                </ImageView>
+            </graphic>
+            <tooltip>
+                <Tooltip text="Notepad" />
+            </tooltip>
+        </Button>
+    </FlowPane>
+    <SplitPane dividerPositions="0.52" maxHeight="1.7976931348623157E308" prefHeight="470.0" prefWidth="752.0" VBox.vgrow="ALWAYS">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="468.0" prefWidth="198.0" styleClass="panel">
+            <HBox pickOnBounds="false" prefHeight="58.0" prefWidth="410.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
+                <AnchorPane maxHeight="-Infinity" minHeight="41.0" minWidth="30.0" prefHeight="58.0" prefWidth="291.0" styleClass="panel" HBox.hgrow="ALWAYS">
+                    <MenuButton fx:id="dirMenuButtonLeft" alignment="BOTTOM_LEFT" contentDisplay="TEXT_ONLY" layoutX="1.0" layoutY="29.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="21.0" prefWidth="326.0" styleClass="file-menu-but" text="Путь" wrapText="true" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="29.0">
+                        <font>
+                            <Font size="10.0" />
+                        </font>
+                    </MenuButton>
+                    <MenuButton fx:id="diskMenuButtonLeft" layoutX="1.0" layoutY="3.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="23.0" prefWidth="56.0" text="MenuButton">
+                        <styleClass>
+                            <String fx:value="background" />
+                            <String fx:value="dir-menu-button" />
+                        </styleClass>
+                        <font>
+                            <Font size="11.0" />
+                        </font>
+                    </MenuButton>
+                    <Separator layoutX="369.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="2.0" AnchorPane.rightAnchor="-4.0">
+                        <padding>
+                            <Insets bottom="3.0" top="3.0" />
+                        </padding>
+                    </Separator>
+                    <Label fx:id="diskInfoLabelLeft" layoutX="63.0" layoutY="9.0" maxWidth="1.7976931348623157E308" prefHeight="17.0" text="Label" AnchorPane.bottomAnchor="33.0" AnchorPane.leftAnchor="63.0" AnchorPane.rightAnchor="0.0" />
+                </AnchorPane>
+                <Pane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="52.0" prefWidth="100.0" styleClass="panel" HBox.hgrow="SOMETIMES">
+                    <HBox.margin>
+                        <Insets />
+                    </HBox.margin>
+                    <rotationAxis>
+                        <Point3D />
+                    </rotationAxis>
+                    <Button fx:id="rootButtonLeft" layoutX="4.0" layoutY="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" styleClass="panel" text="\\">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Button>
+                    <Button fx:id="parentButtonLeft" layoutX="29.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="28.0" styleClass="panel" text="..">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Button>
+                    <MenuButton fx:id="storyMenuButtonLeft" alignment="CENTER" layoutX="30.0" layoutY="28.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="25.0" prefWidth="25.0" styleClass="dir-story-button" />
+                </Pane>
+            </HBox>
+            <TableView fx:id="tableViewLeft" layoutY="53.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="392.0" prefWidth="387.0" styleClass="background" AnchorPane.bottomAnchor="23.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="39.0" AnchorPane.topAnchor="53.0">
+                <placeholder>
+                    <Label text="Эта папка пуста" />
+                </placeholder>
+                <columns>
+                    <TableColumn id="left" fx:id="imageTableColumnLeft" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" resizable="false" sortable="false" />
+                    <TableColumn fx:id="nameTableColumnLeft" prefWidth="88.0" text="Имя" />
+                    <TableColumn fx:id="typeTableColumnLeft" prefWidth="75.0" text="Тип" />
+                    <TableColumn fx:id="sizeTableColumnLeft" prefWidth="196.0" text="Размер" />
+                    <TableColumn fx:id="dateTableColumnLeft" prefWidth="196.0" text="Дата" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+            <Button fx:id="observeButton" layoutX="392.0" layoutY="83.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="83.0">
+                <graphic>
+                    <ImageView fitHeight="23.0" fitWidth="26.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../img/109.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Просмотр" />
+                </tooltip>
+            </Button>
+            <Button fx:id="editButton" layoutX="392.0" layoutY="119.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0">
+                <graphic>
+                    <ImageView fitHeight="24.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../img/113.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Правка" />
+                </tooltip>
+            </Button>
+            <Button fx:id="copyButton" layoutX="392.0" layoutY="155.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0">
+                <graphic>
+                    <ImageView fitHeight="26.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../img/249.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Копировать" />
+                </tooltip>
+            </Button>
+            <Button fx:id="renameMoveButton" layoutX="392.0" layoutY="191.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="4.0">
+                <graphic>
+                    <ImageView fitHeight="23.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../img/253.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Переименовать/Переместить файлы" />
+                </tooltip>
+            </Button>
+            <Button fx:id="pack1Button" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="393.0" layoutY="269.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="5.0">
+                <graphic>
+                    <ImageView fitHeight="22.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../img/121.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Упаковать файлы" />
+                </tooltip>
+            </Button>
+            <Button fx:id="createDirButton" layoutX="391.0" layoutY="307.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" styleClass="panel" AnchorPane.rightAnchor="5.0">
+                <graphic>
+                    <ImageView fitHeight="24.0" fitWidth="21.0" pickOnBounds="true" preserveRatio="true">
+                        <Image url="@../img/117.png" />
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip contentDisplay="CENTER" graphicTextGap="0.0" text="Создать каталог" />
+                </tooltip>
+            </Button>
+            <HBox layoutY="445.0" maxWidth="1.7976931348623157E308" prefHeight="23.0" prefWidth="387.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="39.0">
+                <Label id="dir-label-left" fx:id="dirInfoLabelSizeFreeLeft" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label fx:id="dirInfoLabelSizeLeft" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelFilesSelectedLeft" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelFilesLeft" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelDirSelectedLeft" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelDirLeft" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+            </HBox>
+        </AnchorPane>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="468.0" prefWidth="390.0">
+            <HBox pickOnBounds="false" prefHeight="58.0" prefWidth="410.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0">
+                <AnchorPane maxHeight="1.7976931348623157E308" minHeight="41.0" minWidth="30.0" prefHeight="44.0" prefWidth="333.0" styleClass="panel" HBox.hgrow="ALWAYS">
+                    <MenuButton fx:id="dirMenuButtonRight" alignment="BOTTOM_LEFT" contentDisplay="TEXT_ONLY" layoutX="-1.0" layoutY="31.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="21.0" prefWidth="336.0" styleClass="file-menu-but" text="Путь" wrapText="true" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="-1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="31.0">
+                        <font>
+                            <Font size="10.0" />
+                        </font>
+                    </MenuButton>
+                    <MenuButton fx:id="diskMenuButtonRight" layoutX="-1.0" layoutY="4.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="23.0" prefWidth="56.0" text="MenuButton">
+                        <styleClass>
+                            <String fx:value="background" />
+                            <String fx:value="dir-menu-button" />
+                        </styleClass>
+                    </MenuButton>
+                    <Separator layoutX="333.0" layoutY="1.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="6.0" AnchorPane.rightAnchor="-3.0">
+                        <padding>
+                            <Insets bottom="2.0" top="2.0" />
+                        </padding>
+                    </Separator>
+                    <Label fx:id="diskInfoLabelRight" layoutX="61.0" layoutY="9.0" maxWidth="1.7976931348623157E308" prefHeight="17.0" text="Label" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="61.0" AnchorPane.rightAnchor="-1.0" />
+                </AnchorPane>
+                <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="54.0" prefWidth="57.0" HBox.hgrow="SOMETIMES">
+                    <Button fx:id="rootButtonRight" layoutX="1.0" layoutY="27.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="28.0" styleClass="panel" text="\\">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Button>
+                    <Button fx:id="parentButtonRight" layoutX="31.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="28.0" styleClass="panel" text="..">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                    </Button>
+                    <MenuButton fx:id="storyMenuButtonRight" alignment="CENTER" layoutX="30.0" layoutY="27.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" nodeOrientation="LEFT_TO_RIGHT" prefHeight="25.0" prefWidth="25.0" styleClass="dir-story-button" />
+                </Pane>
+            </HBox>
+            <Pane id="label-panel-right" layoutX="-4.0" layoutY="442.0" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="418.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="-4.0" AnchorPane.rightAnchor="-5.0" />
+            <TableView fx:id="tableViewRight" layoutY="52.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="392.0" prefWidth="393.0" styleClass="background" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="52.0">
+                <placeholder>
+                    <Label text="Эта папка пуста" />
+                </placeholder>
+                <columns>
+                    <TableColumn id="right" fx:id="imageTableColumnRight" maxWidth="20.0" minWidth="20.0" prefWidth="20.0" resizable="false" />
+                    <TableColumn fx:id="nameTableColumnRight" prefWidth="95.0" text="Имя" />
+                    <TableColumn fx:id="typeTableColumnRight" prefWidth="75.0" text="Тип" />
+                    <TableColumn fx:id="sizeTableColumnRight" prefWidth="196.0" text="Размер" />
+                    <TableColumn fx:id="dateTableColumnRight" prefWidth="196.0" text="Дата" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+            <HBox layoutY="444.0" maxWidth="1.7976931348623157E308" prefHeight="23.0" prefWidth="393.0">
+                <Label id="dir-label-left" fx:id="dirInfoLabelSizeFreeRight" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label fx:id="dirInfoLabelSizeRight" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelFilesSelectedRight" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelFilesRight" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelDirSelectedRight" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+                <Label id="dir-label-left" fx:id="dirInfoLabelDirRight" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="23.0" text="Label" />
+            </HBox>
+        </AnchorPane>
+    </SplitPane>
+    <HBox styleClass="panel">
+        <Button fx:id="f3Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="F3 Просмотр" HBox.hgrow="ALWAYS" />
+        <Separator minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="0.0" prefWidth="2.0">
+            <HBox.margin>
+                <Insets bottom="3.0" top="3.0" />
+            </HBox.margin>
+            <padding>
+                <Insets left="2.0" />
+            </padding>
+        </Separator>
+        <Button fx:id="f4Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="F4 Правка" HBox.hgrow="ALWAYS" />
+        <Separator minWidth="-Infinity" orientation="VERTICAL" prefHeight="21.0" prefWidth="0.0">
+            <opaqueInsets>
+                <Insets />
+            </opaqueInsets>
+            <HBox.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </HBox.margin>
+        </Separator>
+        <Button fx:id="f5Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="F5 Копирование" HBox.hgrow="ALWAYS" />
+        <Separator minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <opaqueInsets>
+                <Insets bottom="3.0" top="3.0" />
+            </opaqueInsets>
+            <padding>
+                <Insets bottom="3.0" top="3.0" />
+            </padding>
+            <HBox.margin>
+                <Insets left="3.0" />
+            </HBox.margin>
+        </Separator>
+        <Button fx:id="f6Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="F6 Перемещение" HBox.hgrow="ALWAYS" />
+        <Separator minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <padding>
+                <Insets bottom="3.0" top="3.0" />
+            </padding>
+            <HBox.margin>
+                <Insets left="3.0" />
+            </HBox.margin>
+        </Separator>
+        <Button fx:id="f7Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="F7 Каталог" HBox.hgrow="ALWAYS" />
+        <Separator minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <HBox.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </HBox.margin>
+        </Separator>
+        <Button fx:id="f8Button" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="F8 Удаление" HBox.hgrow="ALWAYS" />
+        <Separator minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0">
+            <HBox.margin>
+                <Insets bottom="3.0" left="3.0" top="3.0" />
+            </HBox.margin>
+        </Separator>
+        <Button fx:id="exitButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="25.0" prefWidth="118.0" styleClass="panel" text="Alt+F4 Выход" HBox.hgrow="ALWAYS" />
+    </HBox>
+</VBox>
